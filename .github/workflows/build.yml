@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -25,11 +25,16 @@ jobs:
         with:
           gradle-version: '9.6.0'
 
-      - name: Extract project ZIP
+      - name: Extract project
         run: |
-          mkdir extracted
-          unzip -o AviatorAIAnalyzer_GitHub_Folder.zip -d extracted
-          cp -r extracted/AviatorAIAnalyzer/* .
-          cp -r extracted/AviatorAIAnalyzer/.[!.]* . 2>/dev/null || true
+          unzip -o AviatorAIAnalyzer_GitHub_Folder.zip -d project
+          cp -r project/AviatorAIAnalyzer/. ./ 
 
-      - name: Build
+      - name: Build APK
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AviatorAIAnalyzer-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
